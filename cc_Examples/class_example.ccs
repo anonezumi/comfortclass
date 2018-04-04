@@ -1,0 +1,116 @@
+/**
+  * This is a javadoc-style comment.
+  * Cool, right?
+  */
+
+import random, time;
+
+class Animal
+{
+    /* MEMBER MODS:
+     * static means it is a property of the class, not the object.
+	 * const means it can't be changed.
+     * private means only this *object* can access this member.
+     * protected means this class and all derived classes can access this member.
+     * public means anyone can access this member.
+     * saved means the member is serialized in JSON.
+     */
+	protected var dimensions = [0,0,0];
+
+	static const var density = 1;
+
+	//init is called to create a class. it is called with Animal().
+	func init(p_dimensions: array)
+	{
+		dimensions = p_dimensions;
+	}
+
+	//the default animal cannot talk. override this with derived classes.
+	func talk()
+	{
+		print("...");
+	}
+
+	func get_weight()
+	{
+		var weight = density;
+		for i in dimensions { weight *= i; } //multiply the density by the volume.
+		return weight;
+	}
+}
+
+enum Moods {Neutral, Happy, Sad, Angry, Excited}; //enums!
+
+class Human(Animal)
+{
+	static const var density = 2; //humans are twice as dense as the average animal.
+	private var mood = Moods.Neutral;
+
+	func init(p_dimensions: array, p_mood: Moods)
+	{
+		dimensions = p_dimensions;
+		mood = p_mood;
+	}
+
+	//keep talk for further-derived classes.
+	func talk()
+	{
+		//strings can be concatenated with +.
+		print("I am feeling " + mood as string + " right now.");
+	}
+
+	//events can be virtual. is the only event modifier as of now.
+	event time.DayElapsed()
+	{
+		mood = random.choice(moods);
+	}
+}
+
+class Wolf(Animal)
+{
+	var owner = null; //owner can be of any type. variables of type null will be changed to the type of what they're set to.
+	//density was not overridden, so it's set to 1.
+	func init(p_dimensions: array, p_owner: Human)
+	{
+		dimensions = p_dimensions;
+		owner = p_owner;
+	}
+
+	func talk()
+	{
+		print("Awooo! ($350?! oh shit)");
+	}
+}
+
+class Werewolf(Wolf, Human) //since Wolf is listed first, its overrides override other overrides.
+{
+	func init(p_dimensions: array, p_owner: Human, p_mood: string)
+	{
+		dimensions = p_dimensions;
+		owner = p_owner;
+		mood = p_mood;
+	}
+
+	func scratch(human: Human)
+	{
+		human = human as Werewolf; //Changes the type of the variable.
+		human.owner = this; //since the human is now a werewolf, it needs an owner.
+	}
+}
+
+class Main()
+{
+    func init()
+    {
+    	var human = Human([1, 5, 1], Moods.Happy);
+    	human.talk(); 				//I am feeling Happy right now.
+    	//TERRIBLE PRACTICE! NEVER DO THIS!
+    	send time.DayElapsed;
+    	human.talk(); 				//I am feeling [random emotion] right now.
+    	var werewolf = Werewolf([2, 6, 1], human, Moods.Excited);
+    	werewolf.talk(); 			//Awooo! ($350?! oh shit)
+    	(werewolf as Human).talk(); //I am feeling Excited right now.
+    	werewolf.scratch(human);
+    	human.talk(); 				//Awooo! ($350?! oh shit)
+    }
+}

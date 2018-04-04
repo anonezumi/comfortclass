@@ -1,0 +1,21 @@
+/**
+A test of whether strings work how they're set up in the ANTLR grammar.
+*/
+
+event start
+{
+    print("This is a string.");
+}
+class ThisIsNot
+{
+    func init()
+    {
+        print("This is also a string.");
+        this_is_not_a_string_though();
+    }
+
+    func this_is_not_a_string_though()
+    {
+        print("it's true.");
+    }
+}
