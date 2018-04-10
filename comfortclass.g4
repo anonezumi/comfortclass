@@ -5,18 +5,19 @@ enumdef			: (ENUM | ENUMP) IDENTIFIER L_BRACE IDENTIFIER (COMMA IDENTIFIER)* R_B
 param 			: expression (COLON identifier)? (EQUALS expression)?;
 paramlist		: L_PAREN param? (COMMA param)* R_PAREN;
 array			: L_BRACKET expression? (COMMA expression)* R_BRACKET;
-magic 			: INT_MAGIC | FLOAT_MAGIC | string | TRUE | FALSE | array | NULL;
+dict_			: L_BRACE (expression EQUALS expression)? (COMMA expression EQUALS expression)* R_BRACE;
+magic 			: INT_MAGIC | FLOAT_MAGIC | string | TRUE | FALSE | array | dict_ | NULL;
 identifier		: IDENTIFIER (DOT IDENTIFIER)*;
 call			: IDENTIFIER L_PAREN expression? (COMMA expression (EQUALS expression)?)* R_PAREN;
 return_			: RETURN expression;
 modifier		: STATIC | CONST | PRIVATE | PROTECTED | PUBLIC | SAVED;
 
-vardef 			: modifier* VAR identifier EQUALS expression;
-extvardef		: EXTDEF modifier* VAR identifier;
-funcdef			: modifier* FUNC identifier paramlist codeblock;
-extfuncdef		: EXTDEF modifier* FUNC identifier paramlist;
+vardef 			: modifier* VAR identifier (EQUALS expression)? SEMICOLON;
+extvardef		: EXTDEF modifier* VAR identifier SEMICOLON;
+funcdef			: modifier* FUNC identifier paramlist codeblock SEMICOLON;
+extfuncdef		: EXTDEF modifier* FUNC identifier paramlist SEMICOLON;
 eventdef		: EVENT identifier codeblock;
-classdef		: (CLASS | OBJECT) identifier (L_PAREN expression (COMMA expression)*)? L_BRACE JAVADOC? (vardef | funcdef | eventdef)* R_BRACE;
+classdef		: (CLASS | OBJECT) IDENTIFIER (L_PAREN identifier (COMMA identifier)* R_PAREN)? L_BRACE JAVADOC? (vardef | funcdef | eventdef)* R_BRACE;
 if_ 			: IF expression codeblock (ELSE IF expression codeblock)* (ELSE codeblock)?;
 while_			: WHILE expression codeblock;
 for_			: FOR identifier IN expression codeblock;
@@ -49,10 +50,6 @@ expression		: L_PAREN expression R_PAREN
 				| expression AND AND expression
 				| expression OR OR expression;
 statement		:	( call
-					| vardef
-					| enumdef
-					| extvardef
-					| extfuncdef
 					| return_
 					| identifier EQUALS expression
 					| identifier PLUS EQUALS expression
@@ -66,6 +63,10 @@ statement		:	( call
 					| identifier XOR EQUALS expression
 					| identifier OR EQUALS expression
 					) SEMICOLON
+				| vardef
+				| enumdef
+				| extvardef
+				| extfuncdef
 				| if_
 				| while_
 				| for_

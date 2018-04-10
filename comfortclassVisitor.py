@@ -34,6 +34,11 @@ class comfortclassVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by comfortclassParser#dict_.
+    def visitDict_(self, ctx:comfortclassParser.Dict_Context):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by comfortclassParser#magic.
     def visitMagic(self, ctx:comfortclassParser.MagicContext):
         return self.visitChildren(ctx)
