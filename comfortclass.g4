@@ -1,20 +1,21 @@
 grammar comfortclass;
 
-imports			: (FROM expression)? IMPORT expression (COMMA expression)*;
+identifier		: IDENTIFIER (DOT IDENTIFIER)*;
+imports			: (FROM identifier)? IMPORT identifier (AS identifier)? (COMMA identifier (AS identifier)?)*;
 enumdef			: (ENUM | ENUMP) IDENTIFIER L_BRACE IDENTIFIER (COMMA IDENTIFIER)* R_BRACE;
 param 			: expression (COLON identifier)? (EQUALS expression)?;
 paramlist		: L_PAREN param? (COMMA param)* R_PAREN;
 array			: L_BRACKET expression? (COMMA expression)* R_BRACKET;
 dict_			: L_BRACE (expression EQUALS expression)? (COMMA expression EQUALS expression)* R_BRACE;
 magic 			: INT_MAGIC | FLOAT_MAGIC | string | TRUE | FALSE | array | dict_ | NULL;
-identifier		: IDENTIFIER (DOT IDENTIFIER)*;
-call			: IDENTIFIER L_PAREN expression? (COMMA expression (EQUALS expression)?)* R_PAREN;
+call			: identifier L_PAREN expression? (COMMA expression (EQUALS expression)?)* R_PAREN;
+send 			: SEND expression;
 return_			: RETURN expression;
 modifier		: STATIC | CONST | PRIVATE | PROTECTED | PUBLIC | SAVED;
 
 vardef 			: modifier* VAR identifier (EQUALS expression)? SEMICOLON;
 extvardef		: EXTDEF modifier* VAR identifier SEMICOLON;
-funcdef			: modifier* FUNC identifier paramlist codeblock SEMICOLON;
+funcdef			: modifier* FUNC identifier paramlist codeblock;
 extfuncdef		: EXTDEF modifier* FUNC identifier paramlist SEMICOLON;
 eventdef		: EVENT identifier codeblock;
 classdef		: (CLASS | OBJECT) IDENTIFIER (L_PAREN identifier (COMMA identifier)* R_PAREN)? L_BRACE JAVADOC? (vardef | funcdef | eventdef)* R_BRACE;
@@ -24,8 +25,8 @@ for_			: FOR identifier IN expression codeblock;
 switch_			: SWITCH L_BRACE (CASE expression codeblock)+ (DEFAULT codeblock) R_BRACE;
 expression		: L_PAREN expression R_PAREN
 				| magic
-				| identifier
 				| call
+				| identifier
 				| expression L_BRACKET expression R_BRACKET //array access
 				| MINUS expression
 				| EXCLAIMATION expression
@@ -50,18 +51,19 @@ expression		: L_PAREN expression R_PAREN
 				| expression AND AND expression
 				| expression OR OR expression;
 statement		:	( call
+					| send
 					| return_
-					| identifier EQUALS expression
-					| identifier PLUS EQUALS expression
-					| identifier MINUS EQUALS expression
-					| identifier ASTERISK EQUALS expression
-					| identifier SLASH EQUALS expression
-					| identifier PERCENT EQUALS expression
-					| identifier LESS LESS EQUALS expression
-					| identifier GREATER GREATER EQUALS expression
-					| identifier AND EQUALS expression
-					| identifier XOR EQUALS expression
-					| identifier OR EQUALS expression
+					| expression EQUALS expression
+					| expression PLUS EQUALS expression
+					| expression MINUS EQUALS expression
+					| expression ASTERISK EQUALS expression
+					| expression SLASH EQUALS expression
+					| expression PERCENT EQUALS expression
+					| expression LESS LESS EQUALS expression
+					| expression GREATER GREATER EQUALS expression
+					| expression AND EQUALS expression
+					| expression XOR EQUALS expression
+					| expression OR EQUALS expression
 					) SEMICOLON
 				| vardef
 				| enumdef

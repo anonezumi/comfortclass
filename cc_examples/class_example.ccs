@@ -32,7 +32,7 @@ class Animal
 	}
 }
 
-enum Moods {Neutral, Happy, Sad, Angry, Excited}; //enums!
+enum Moods {Neutral, Happy, Sad, Angry, Excited} //enums!
 
 class Human(Animal)
 {
@@ -52,10 +52,9 @@ class Human(Animal)
 		print("I am feeling " + mood as string + " right now.");
 	}
 
-	//events can be virtual. is the only event modifier as of now.
-	event time.DayElapsed()
+	event time.DayElapsed
 	{
-		mood = random.choice(moods);
+		mood = random.choice(moods as array); //casting an enum to an array gives us an array of all possible values.
 	}
 }
 
@@ -91,7 +90,7 @@ class Werewolf(Wolf, Human) //since Wolf is listed first, its overrides override
 	}
 }
 
-class Main()
+class Main
 {
     func init()
     {
@@ -102,7 +101,8 @@ class Main()
     	human.talk(); 				//I am feeling [random emotion] right now.
     	var werewolf = Werewolf([2, 6, 1], human, Moods.Excited);
     	werewolf.talk(); 			//Awooo! ($350?! oh shit)
-    	(werewolf as Human).talk(); //I am feeling Excited right now.
+        var casted = werewolf as Human;
+    	casted.talk(); //I am feeling Excited right now.
     	werewolf.scratch(human);
     	human.talk(); 				//Awooo! ($350?! oh shit)
     }

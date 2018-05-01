@@ -9,6 +9,11 @@ else:
 
 class comfortclassVisitor(ParseTreeVisitor):
 
+    # Visit a parse tree produced by comfortclassParser#identifier.
+    def visitIdentifier(self, ctx:comfortclassParser.IdentifierContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by comfortclassParser#imports.
     def visitImports(self, ctx:comfortclassParser.ImportsContext):
         return self.visitChildren(ctx)
@@ -44,13 +49,13 @@ class comfortclassVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by comfortclassParser#identifier.
-    def visitIdentifier(self, ctx:comfortclassParser.IdentifierContext):
+    # Visit a parse tree produced by comfortclassParser#call.
+    def visitCall(self, ctx:comfortclassParser.CallContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by comfortclassParser#call.
-    def visitCall(self, ctx:comfortclassParser.CallContext):
+    # Visit a parse tree produced by comfortclassParser#send.
+    def visitSend(self, ctx:comfortclassParser.SendContext):
         return self.visitChildren(ctx)
 
 
